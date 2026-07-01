@@ -36,7 +36,8 @@ export class SQLiteAdapter implements DBAdapter {
         status TEXT NOT NULL DEFAULT 'untouched',
         createdAt TEXT NOT NULL,
         llmId TEXT NOT NULL DEFAULT '',
-        llmLabel TEXT NOT NULL DEFAULT ''
+        llmLabel TEXT NOT NULL DEFAULT '',
+        tutorialUrl TEXT DEFAULT NULL
       );
 
       CREATE TABLE IF NOT EXISTS user_prefs (
@@ -46,7 +47,7 @@ export class SQLiteAdapter implements DBAdapter {
       );
     `)
 
-    // Migrate existing databases that don't have llmId/llmLabel columns
+    // Migrate existing databases
     const columns = this.db.prepare(`PRAGMA table_info(topic_cards)`).all() as any[]
     const columnNames = columns.map(c => c.name)
 
@@ -55,6 +56,9 @@ export class SQLiteAdapter implements DBAdapter {
     }
     if (!columnNames.includes('llmLabel')) {
       this.db.exec(`ALTER TABLE topic_cards ADD COLUMN llmLabel TEXT NOT NULL DEFAULT ''`)
+    }
+    if (!columnNames.includes('tutorialUrl')) {
+      this.db.exec(`ALTER TABLE topic_cards ADD COLUMN tutorialUrl TEXT DEFAULT NULL`)
     }
   }
 
@@ -86,17 +90,24 @@ export class SQLiteAdapter implements DBAdapter {
       .filter(card => card.sourceConversationIds.includes(conversationId))
   }
 
+  getQueuedCards(): TopicCard[] {
+    const rows = this.db.prepare(
+      `SELECT * FROM topic_cards WHERE status = 'queued' ORDER BY createdAt DESC`
+    ).all() as any[]
+    return rows.map(this.deserializeCard)
+  }
+
   upsertTopicCard(card: TopicCard): void {
     this.db.prepare(`
       INSERT INTO topic_cards (
         id, title, description, tier, category,
         prerequisites, sourceConversationIds, status,
-        createdAt, llmId, llmLabel
+        createdAt, llmId, llmLabel, tutorialUrl
       )
       VALUES (
         @id, @title, @description, @tier, @category,
         @prerequisites, @sourceConversationIds, @status,
-        @createdAt, @llmId, @llmLabel
+        @createdAt, @llmId, @llmLabel, @tutorialUrl
       )
       ON CONFLICT(id) DO UPDATE SET
         title = @title,
@@ -107,7 +118,8 @@ export class SQLiteAdapter implements DBAdapter {
         sourceConversationIds = @sourceConversationIds,
         status = @status,
         llmId = @llmId,
-        llmLabel = @llmLabel
+        llmLabel = @llmLabel,
+        tutorialUrl = @tutorialUrl
     `).run({
       ...card,
       prerequisites: JSON.stringify(card.prerequisites),
@@ -117,6 +129,10 @@ export class SQLiteAdapter implements DBAdapter {
 
   updateCardStatus(id: string, status: TopicCard['status']): void {
     this.db.prepare('UPDATE topic_cards SET status = ? WHERE id = ?').run(status, id)
+  }
+
+  updateCardTutorialUrl(id: string, tutorialUrl: string | null): void {
+    this.db.prepare('UPDATE topic_cards SET tutorialUrl = ? WHERE id = ?').run(tutorialUrl, id)
   }
 
   getUserPrefs(): UserPrefs | null {
@@ -145,7 +161,8 @@ export class SQLiteAdapter implements DBAdapter {
     return {
       ...row,
       prerequisites: JSON.parse(row.prerequisites),
-      sourceConversationIds: JSON.parse(row.sourceConversationIds)
+      sourceConversationIds: JSON.parse(row.sourceConversationIds),
+      tutorialUrl: row.tutorialUrl ?? null
     }
   }
 }

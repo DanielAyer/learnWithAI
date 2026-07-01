@@ -4,13 +4,15 @@ export interface DBAdapter {
   // Conversations
   getConversations(): Conversation[]
   upsertConversation(conversation: Conversation): void
-  
+
   // Topic Cards
   getTopicCards(): TopicCard[]
   getTopicCardsByConversation(conversationId: string): TopicCard[]
+  getQueuedCards(): TopicCard[]
   upsertTopicCard(card: TopicCard): void
   updateCardStatus(id: string, status: TopicCard['status']): void
-  
+  updateCardTutorialUrl(id: string, tutorialUrl: string | null): void
+
   // User Preferences
   getUserPrefs(): UserPrefs | null
   saveUserPrefs(prefs: UserPrefs): void

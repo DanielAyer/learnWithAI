@@ -10,7 +10,7 @@ export type Category =
   | 'Security'
   | 'Networking'
 
-export type CardStatus = 'untouched' | 'reading' | 'learned'
+export type CardStatus = 'untouched' | 'queued' | 'learned'
 
 export type ConversationStatus = 'unanalyzed' | 'analyzed' | 'ignored'
 
@@ -56,6 +56,7 @@ export interface TopicCard {
   createdAt: string
   llmId: string
   llmLabel: string
+  tutorialUrl: string | null
 }
 
 export interface Conversation {

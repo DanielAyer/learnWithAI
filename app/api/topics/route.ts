@@ -6,10 +6,16 @@ export async function GET(request: Request) {
     const db = await getDB()
     const { searchParams } = new URL(request.url)
     const conversationId = searchParams.get('conversationId')
+    const queued = searchParams.get('queued')
 
-    const cards = conversationId
-      ? db.getTopicCardsByConversation(conversationId)
-      : db.getTopicCards()
+    let cards
+    if (queued === 'true') {
+      cards = db.getQueuedCards()
+    } else if (conversationId) {
+      cards = db.getTopicCardsByConversation(conversationId)
+    } else {
+      cards = db.getTopicCards()
+    }
 
     return NextResponse.json({ cards })
 
@@ -25,13 +31,22 @@ export async function GET(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const db = await getDB()
-    const { id, status } = await request.json()
+    const body = await request.json()
 
-    db.updateCardStatus(id, status)
+    // Update status
+    if (body.status !== undefined) {
+      db.updateCardStatus(body.id, body.status)
+    }
+
+    // Update tutorial URL
+    if (body.tutorialUrl !== undefined) {
+      db.updateCardTutorialUrl(body.id, body.tutorialUrl)
+    }
+
     return NextResponse.json({ success: true })
 
   } catch (error) {
-    console.error('Error updating topic status:', error)
+    console.error('Error updating topic:', error)
     return NextResponse.json(
       { error: 'Failed to update topic' },
       { status: 500 }
