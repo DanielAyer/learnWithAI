@@ -8,12 +8,13 @@ export class ClaudeAdapter implements LLMAdapter {
   private config: LLMConfig
 
   constructor(config: LLMConfig) {
-    this.config = config
-    this.client = new Anthropic({
-      apiKey: config.apiKey || process.env.ANTHROPIC_API_KEY,
-      baseURL: config.baseUrl
-    })
-  }
+  this.config = config
+  console.log('Claude adapter init, key prefix:', config.apiKey?.slice(0, 10))
+  this.client = new Anthropic({
+    apiKey: config.apiKey || process.env.ANTHROPIC_API_KEY,
+    baseURL: config.baseUrl
+  })
+}
 
   async analyzeConversation(input: AnalysisInput) {
     const { title, prefs, existingTopics } = input

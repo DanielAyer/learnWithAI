@@ -127,7 +127,7 @@ export default function QueuePage() {
                   Classify results by matching domain against platform lists.
                   Return 2 free + 2 paid suggestions per topic. */}
               
-                href={`https://www.google.com/search?q=Learn+${encodeURIComponent(card.title)}`}
+                <a href={`https://www.google.com/search?q=Learn+${encodeURIComponent(card.title)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-orange-500 hover:text-orange-600 transition-colors"

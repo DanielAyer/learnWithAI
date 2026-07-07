@@ -46,7 +46,8 @@ export async function POST(request: Request) {
       status: 'untouched' as const,
       createdAt: new Date().toISOString(),
       llmId: config.id,
-      llmLabel: config.label
+      llmLabel: config.label,
+      tutorialUrl: null
     }))
 
     for (const card of cards) {

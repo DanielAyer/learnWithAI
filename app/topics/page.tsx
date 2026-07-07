@@ -1,12 +1,21 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { TopicCard } from '@/types'
+import { useEffect, useState, useMemo } from 'react'
+import { TopicCard, Tier, Category } from '@/types'
 import TopicCardComponent from '@/components/TopicCard'
+import FilterBar, { FilterState } from '@/components/FilterBar'
+
+const DEFAULT_FILTERS: FilterState = {
+  tier: 'all',
+  category: 'all',
+  status: 'all',
+  sort: 'newest'
+}
 
 export default function TopicsPage() {
   const [cards, setCards] = useState<TopicCard[]>([])
   const [loading, setLoading] = useState(true)
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
 
   useEffect(() => {
     async function fetchCards() {
@@ -29,6 +38,46 @@ export default function TopicsPage() {
     )
   }
 
+  const filteredCards = useMemo(() => {
+    let result = [...cards]
+
+    // Filter by tier
+    if (filters.tier !== 'all') {
+      result = result.filter(c => c.tier === filters.tier)
+    }
+
+    // Filter by category
+    if (filters.category !== 'all') {
+      result = result.filter(c => c.category === filters.category)
+    }
+
+    // Filter by status
+    if (filters.status !== 'all') {
+      result = result.filter(c => c.status === filters.status)
+    }
+
+    // Sort
+    switch (filters.sort) {
+      case 'newest':
+        result.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        break
+      case 'oldest':
+        result.sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+        break
+      case 'tier-asc':
+        result.sort((a, b) => a.tier - b.tier)
+        break
+      case 'tier-desc':
+        result.sort((a, b) => b.tier - a.tier)
+        break
+      case 'title':
+        result.sort((a, b) => a.title.localeCompare(b.title))
+        break
+    }
+
+    return result
+  }, [cards, filters])
+
   if (loading) {
     return <p className="text-gray-500">Loading topics...</p>
   }
@@ -37,16 +86,32 @@ export default function TopicsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">All Topics</h1>
-        <span className="text-sm text-gray-500">{cards.length} total</span>
       </div>
-      {cards.length === 0 ? (
+
+      <FilterBar
+        filters={filters}
+        onChange={setFilters}
+        totalCount={cards.length}
+        filteredCount={filteredCards.length}
+      />
+
+      {filteredCards.length === 0 ? (
         <div className="text-center py-16 text-gray-400">
-          <p className="text-sm">No topics yet.</p>
-          <p className="text-xs mt-1">Analyze some conversations to get started.</p>
+          {cards.length === 0 ? (
+            <>
+              <p className="text-sm">No topics yet.</p>
+              <p className="text-xs mt-1">Analyze some conversations to get started.</p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm">No topics match your filters.</p>
+              <p className="text-xs mt-1">Try adjusting or resetting the filters.</p>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {cards.map(card => (
+          {filteredCards.map(card => (
             <TopicCardComponent
               key={card.id}
               card={card}

@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 const NAV_LINKS = [
   { href: '/conversations', label: 'Conversations' },
   { href: '/topics', label: 'Topics' },
+  { href: '/queue', label: 'Queue' },
   { href: '/settings/llm', label: 'Settings' },
 ]
 

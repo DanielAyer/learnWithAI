@@ -60,7 +60,6 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
 
       {/* Footer */}
       <div className="flex items-center justify-between mt-auto pt-1">
-        {/* Status badge — only show when not untouched */}
         {card.status !== 'untouched' && (
           <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[card.status]}`}>
             {card.status}
@@ -68,8 +67,7 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
         )}
 
         <div className="flex gap-2 ml-auto">
-          {/* Add to Queue / already queued */}
-          {showQueueButton && card.status === 'untouched' && (
+          {card.status === 'untouched' && (
             <button
               onClick={() => onStatusChange(card.id, 'queued')}
               className="text-xs bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-colors"
@@ -78,17 +76,23 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
             </button>
           )}
 
-          {/* Mark learned */}
           {card.status === 'queued' && (
-            <button
-              onClick={() => onStatusChange(card.id, 'learned')}
-              className="text-xs bg-green-500 text-white px-3 py-1.5 rounded-lg hover:bg-green-600 transition-colors"
-            >
-              Mark Learned
-            </button>
+            <>
+              <button
+                onClick={() => onStatusChange(card.id, 'untouched')}
+                className="text-xs border border-gray-200 text-gray-500 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Remove
+              </button>
+              <button
+                onClick={() => onStatusChange(card.id, 'learned')}
+                className="text-xs bg-green-500 text-white px-3 py-1.5 rounded-lg hover:bg-green-600 transition-colors"
+              >
+                Learned
+              </button>
+            </>
           )}
 
-          {/* Learned state */}
           {card.status === 'learned' && (
             <span className="text-xs text-green-600 font-medium">
               ✓ Learned
