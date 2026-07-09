@@ -12,8 +12,7 @@ const NAV_LINKS = [
   { href: '/conversations', label: 'Conversations' },
   { href: '/topics', label: 'Topics' },
   { href: '/queue', label: 'Queue' },
-  { href: '/settings/llm', label: 'LLMs' },
-  { href: '/settings/preferences', label: 'Preferences' },
+  { href: '/settings', label: 'Settings' },
 ]
 
 export default function RootLayout({

@@ -1,6 +1,8 @@
 'use client'
 
 import { TopicCard } from '@/types'
+import TierBadge from './TierBadge'
+import CategoryBadge from './CategoryBadge'
 
 interface Props {
   card: TopicCard
@@ -8,15 +10,9 @@ interface Props {
   showQueueButton?: boolean
 }
 
-const tierLabels = { 1: 'Surface', 2: 'Mechanism', 3: 'Substrate' }
-const tierColors = {
-  1: 'bg-blue-50 text-blue-600',
-  2: 'bg-purple-50 text-purple-600',
-  3: 'bg-red-50 text-red-600'
-}
 const statusColors = {
   untouched: '',
-  queued: 'bg-yellow-50 text-yellow-600',
+  queued: 'bg-yellow-50 text-yellow-700',
   learned: 'bg-green-50 text-green-700'
 }
 
@@ -28,9 +24,7 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
         <h3 className="font-medium text-sm leading-snug text-primary">
           {card.title}
         </h3>
-        <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${tierColors[card.tier]}`}>
-          {tierLabels[card.tier]}
-        </span>
+        <TierBadge tier={card.tier} />
       </div>
 
       {/* Description */}
@@ -47,9 +41,7 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
       )}
 
       {/* Category */}
-      <div className="text-xs text-muted">
-        {card.category}
-      </div>
+      <CategoryBadge category={card.category} />
 
       {/* LLM badge */}
       {card.llmLabel && (
@@ -67,7 +59,7 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
         )}
 
         <div className="flex gap-2 ml-auto">
-          {card.status === 'untouched' && (
+          {showQueueButton && card.status === 'untouched' && (
             <button
               onClick={() => onStatusChange(card.id, 'queued')}
               className="text-xs bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-colors"

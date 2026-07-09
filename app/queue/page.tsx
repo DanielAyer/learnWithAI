@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { TopicCard } from '@/types'
+import TierBadge from '@/components/TierBadge'
+import CategoryBadge from '@/components/CategoryBadge'
 
 export default function QueuePage() {
   const [cards, setCards] = useState<TopicCard[]>([])
@@ -59,7 +61,7 @@ export default function QueuePage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">Learning Queue</h1>
-        <span className="text-sm text-secondary">{cards.length} topics</span>
+        <span className="text-sm text-muted">{cards.length} topics</span>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -67,18 +69,12 @@ export default function QueuePage() {
           <div key={card.id} className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
             {/* Header */}
             <div className="flex items-start justify-between gap-2">
-              <div className="flex flex-col gap-1">
-                <h3 className="font-medium text-sm text-primary">{card.title}</h3>
-                <span className="text-xs text-muted">{card.category}</span>
-              </div>
-              <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
-                card.tier === 1 ? 'bg-blue-50 text-blue-600' :
-                card.tier === 2 ? 'bg-purple-50 text-purple-600' :
-                'bg-red-50 text-red-600'
-              }`}>
-                {card.tier === 1 ? 'Surface' : card.tier === 2 ? 'Mechanism' : 'Substrate'}
-              </span>
+              <h3 className="font-medium text-sm text-primary">{card.title}</h3>
+              <TierBadge tier={card.tier} />
             </div>
+
+            {/* Category */}
+            <CategoryBadge category={card.category} />
 
             {/* Description */}
             <p className="text-xs text-secondary leading-relaxed">
@@ -95,7 +91,7 @@ export default function QueuePage() {
 
             {/* Tutorial URL */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs text-muted">Tutorial URL</label>
+              <label className="text-xs text-secondary">Tutorial URL</label>
               <div className="flex gap-2">
                 <input
                   type="url"
@@ -105,7 +101,7 @@ export default function QueuePage() {
                   className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-mono"
                 />
                 {card.tutorialUrl && (
-                    <a
+                  <a
                     href={card.tutorialUrl}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -126,8 +122,8 @@ export default function QueuePage() {
                   Paid platforms: Udemy, Coursera, LinkedIn Learning, Pluralsight
                   Classify results by matching domain against platform lists.
                   Return 2 free + 2 paid suggestions per topic. */}
-              
-                <a href={`https://www.google.com/search?q=Learn+${encodeURIComponent(card.title)}`}
+              <a
+                href={`https://www.google.com/search?q=Learn+${encodeURIComponent(card.title)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-orange-500 hover:text-orange-600 transition-colors"
