@@ -132,7 +132,7 @@ export default function LLMSettingsPage() {
     setDirty(false)
   }
 
-  if (!staged) return <p className="text-gray-500">Loading...</p>
+  if (!staged) return <p className="text-secondary">Loading...</p>
 
   const sorted = [...staged.configs].sort((a, b) => a.index - b.index)
 
@@ -177,8 +177,8 @@ export default function LLMSettingsPage() {
       {/* Global timeout */}
       <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6 flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-medium text-gray-900">Global Timeout</h2>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <h2 className="text-sm font-medium text-primary">Global Timeout</h2>
+          <p className="text-xs text-secondary mt-0.5">
             Default timeout for all LLMs unless overridden per config
           </p>
         </div>
@@ -190,13 +190,13 @@ export default function LLMSettingsPage() {
             onBlur={handleGlobalTimeoutBlur}
             className="w-28 border border-gray-200 rounded-lg px-3 py-1.5 text-sm font-mono text-right"
           />
-          <span className="text-sm text-gray-400">ms</span>
+          <span className="text-sm text-muted">ms</span>
         </div>
       </div>
 
       {/* LLM tiles */}
       {sorted.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-muted">
           <p className="text-sm">No LLMs configured yet.</p>
           <p className="text-xs mt-1">Click "Add LLM" to get started.</p>
         </div>

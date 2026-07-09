@@ -43,12 +43,12 @@ export default function QueuePage() {
   }
 
   if (loading) {
-    return <p className="text-gray-500">Loading queue...</p>
+    return <p className="text-secondary">Loading queue...</p>
   }
 
   if (cards.length === 0) {
     return (
-      <div className="text-center py-16 text-gray-400">
+      <div className="text-center py-16 text-muted">
         <p className="text-sm">Your queue is empty.</p>
         <p className="text-xs mt-1">Add topics from the Topics page to get started.</p>
       </div>
@@ -59,7 +59,7 @@ export default function QueuePage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">Learning Queue</h1>
-        <span className="text-sm text-gray-500">{cards.length} topics</span>
+        <span className="text-sm text-secondary">{cards.length} topics</span>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -68,8 +68,8 @@ export default function QueuePage() {
             {/* Header */}
             <div className="flex items-start justify-between gap-2">
               <div className="flex flex-col gap-1">
-                <h3 className="font-medium text-sm text-gray-900">{card.title}</h3>
-                <span className="text-xs text-gray-400">{card.category}</span>
+                <h3 className="font-medium text-sm text-primary">{card.title}</h3>
+                <span className="text-xs text-muted">{card.category}</span>
               </div>
               <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
                 card.tier === 1 ? 'bg-blue-50 text-blue-600' :
@@ -81,13 +81,13 @@ export default function QueuePage() {
             </div>
 
             {/* Description */}
-            <p className="text-xs text-gray-500 leading-relaxed">
+            <p className="text-xs text-secondary leading-relaxed">
               {card.description}
             </p>
 
             {/* Prerequisites */}
             {card.prerequisites.length > 0 && (
-              <div className="text-xs text-gray-400">
+              <div className="text-xs text-muted">
                 <span className="font-medium">Prereqs: </span>
                 {card.prerequisites.join(', ')}
               </div>
@@ -95,7 +95,7 @@ export default function QueuePage() {
 
             {/* Tutorial URL */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs text-gray-400">Tutorial URL</label>
+              <label className="text-xs text-muted">Tutorial URL</label>
               <div className="flex gap-2">
                 <input
                   type="url"
@@ -109,7 +109,7 @@ export default function QueuePage() {
                     href={card.tutorialUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-colors shrink-0"
+                    className="text-xs bg-gray-100 text-secondary px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-colors shrink-0"
                   >
                     Open →
                   </a>
@@ -145,7 +145,7 @@ export default function QueuePage() {
 
             {/* LLM badge */}
             {card.llmLabel && (
-              <div className="font-mono text-xs text-gray-300">
+              <div className="font-mono text-xs text-muted">
                 {card.llmLabel}
               </div>
             )}

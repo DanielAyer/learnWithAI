@@ -13,7 +13,7 @@ interface Props {
 }
 
 const statusColors = {
-  untested: 'bg-gray-200 text-gray-500',
+  untested: 'bg-gray-200 text-secondary',
   connected: 'bg-green-100 text-green-700',
   failed: 'bg-red-100 text-red-600'
 }
@@ -57,7 +57,7 @@ export default function LLMTile({
     <div className="bg-white border border-gray-200 rounded-xl p-4 flex gap-4 items-start">
       {/* Priority index input */}
       <div className="flex flex-col items-center gap-1 shrink-0">
-        <label className="text-xs text-gray-400">Priority</label>
+        <label className="text-xs text-muted">Priority</label>
         <input
           type="number"
           value={indexInput}
@@ -71,7 +71,7 @@ export default function LLMTile({
       <div className="flex flex-col gap-2 flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full shrink-0 ${statusDot[config.status]}`} />
-          <h3 className="font-medium text-sm text-gray-900 truncate">
+          <h3 className="font-medium text-sm text-primary truncate">
             {config.label}
           </h3>
           <span className={`text-xs px-2 py-0.5 rounded-full ml-auto shrink-0 ${statusColors[config.status]}`}>
@@ -79,15 +79,15 @@ export default function LLMTile({
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-500">
-          <span><span className="text-gray-400">Provider</span> {config.provider}</span>
-          <span><span className="text-gray-400">Model</span> {config.model}</span>
-          <span><span className="text-gray-400">Family</span> {config.family}</span>
-          <span><span className="text-gray-400">Version</span> {config.version}</span>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-secondary">
+          <span><span className="text-muted">Provider</span> {config.provider}</span>
+          <span><span className="text-muted">Model</span> {config.model}</span>
+          <span><span className="text-muted">Family</span> {config.family}</span>
+          <span><span className="text-muted">Version</span> {config.version}</span>
           <span className="col-span-2 font-mono truncate">
-            <span className="text-gray-400">URL</span> {config.baseUrl}
+            <span className="text-muted">URL</span> {config.baseUrl}
           </span>
-          <span><span className="text-gray-400">Timeout</span> {timeout}</span>
+          <span><span className="text-muted">Timeout</span> {timeout}</span>
         </div>
       </div>
 
@@ -95,7 +95,7 @@ export default function LLMTile({
       <div className="flex flex-col gap-2 shrink-0">
         <button
           onClick={() => onEdit(config)}
-          className="text-xs border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+          className="text-xs border border-gray-200 text-secondary px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
         >
           Edit
         </button>
@@ -109,7 +109,7 @@ export default function LLMTile({
             </button>
             <button
               onClick={() => setConfirmDelete(false)}
-              className="text-xs border border-gray-200 text-gray-500 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+              className="text-xs border border-gray-200 text-secondary px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>

@@ -99,7 +99,7 @@ export default function LLMModal({ initial, onSave, onCancel, globalTimeoutMs }:
 
         {/* Provider */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600">Provider</label>
+          <label className="text-xs font-medium text-secondary">Provider</label>
           <select
             value={provider}
             onChange={e => setProvider(e.target.value as LLMProvider)}
@@ -113,7 +113,7 @@ export default function LLMModal({ initial, onSave, onCancel, globalTimeoutMs }:
 
         {/* Base URL */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600">Base URL</label>
+          <label className="text-xs font-medium text-secondary">Base URL</label>
           <input
             type="text"
             value={baseUrl}
@@ -125,8 +125,8 @@ export default function LLMModal({ initial, onSave, onCancel, globalTimeoutMs }:
 
         {/* API Key */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600">
-            API Key <span className="text-gray-400">(optional for local)</span>
+          <label className="text-xs font-medium text-secondary">
+            API Key <span className="text-muted">(optional for local)</span>
           </label>
           <input
             type="password"
@@ -140,7 +140,7 @@ export default function LLMModal({ initial, onSave, onCancel, globalTimeoutMs }:
         {/* Family + Version */}
         <div className="flex gap-3">
           <div className="flex flex-col gap-1 flex-1">
-            <label className="text-xs font-medium text-gray-600">Family</label>
+            <label className="text-xs font-medium text-secondary">Family</label>
             <input
               type="text"
               value={family}
@@ -150,7 +150,7 @@ export default function LLMModal({ initial, onSave, onCancel, globalTimeoutMs }:
             />
           </div>
           <div className="flex flex-col gap-1 w-28">
-            <label className="text-xs font-medium text-gray-600">Version</label>
+            <label className="text-xs font-medium text-secondary">Version</label>
             <input
               type="text"
               value={version}
@@ -163,8 +163,8 @@ export default function LLMModal({ initial, onSave, onCancel, globalTimeoutMs }:
 
         {/* Model string */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600">
-            Model string <span className="text-gray-400">(auto-generated)</span>
+          <label className="text-xs font-medium text-secondary">
+            Model string <span className="text-muted">(auto-generated)</span>
           </label>
           <input
             type="text"
@@ -177,8 +177,8 @@ export default function LLMModal({ initial, onSave, onCancel, globalTimeoutMs }:
 
         {/* Label */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600">
-            Label <span className="text-gray-400">(auto-generated)</span>
+          <label className="text-xs font-medium text-secondary">
+            Label <span className="text-muted">(auto-generated)</span>
           </label>
           <input
             type="text"
@@ -191,8 +191,8 @@ export default function LLMModal({ initial, onSave, onCancel, globalTimeoutMs }:
 
         {/* Timeout */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-600">
-            Timeout (ms) <span className="text-gray-400">(leave blank for global default: {globalTimeoutMs}ms)</span>
+          <label className="text-xs font-medium text-secondary">
+            Timeout (ms) <span className="text-muted">(leave blank for global default: {globalTimeoutMs}ms)</span>
           </label>
           <input
             type="number"
@@ -221,14 +221,14 @@ export default function LLMModal({ initial, onSave, onCancel, globalTimeoutMs }:
           <button
             onClick={handleTest}
             disabled={testing || !model || !baseUrl}
-            className="text-sm border border-gray-200 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40"
+            className="text-sm border border-gray-200 text-secondary px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40"
           >
             {testing ? 'Testing...' : 'Test Connection'}
           </button>
           <div className="flex gap-2 ml-auto">
             <button
               onClick={onCancel}
-              className="text-sm text-gray-500 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              className="text-sm text-secondary px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>

@@ -61,7 +61,7 @@ export default function FilterBar({ filters, onChange, totalCount, filteredCount
       <select
         value={String(filters.tier)}
         onChange={e => update({ tier: e.target.value === 'all' ? 'all' : Number(e.target.value) as Tier })}
-        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700"
+        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-secondary"
       >
         {TIERS.map(t => (
           <option key={String(t.value)} value={String(t.value)}>{t.label}</option>
@@ -72,7 +72,7 @@ export default function FilterBar({ filters, onChange, totalCount, filteredCount
       <select
         value={filters.category}
         onChange={e => update({ category: e.target.value as Category | 'all' })}
-        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700"
+        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-secondary"
       >
         {CATEGORIES.map(c => (
           <option key={c.value} value={c.value}>{c.label}</option>
@@ -83,7 +83,7 @@ export default function FilterBar({ filters, onChange, totalCount, filteredCount
       <select
         value={filters.status}
         onChange={e => update({ status: e.target.value })}
-        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700"
+        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-secondary"
       >
         {STATUS_OPTIONS.map(s => (
           <option key={s.value} value={s.value}>{s.label}</option>
@@ -94,7 +94,7 @@ export default function FilterBar({ filters, onChange, totalCount, filteredCount
       <select
         value={filters.sort}
         onChange={e => update({ sort: e.target.value })}
-        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700"
+        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-secondary"
       >
         {SORT_OPTIONS.map(s => (
           <option key={s.value} value={s.value}>{s.label}</option>
@@ -102,7 +102,7 @@ export default function FilterBar({ filters, onChange, totalCount, filteredCount
       </select>
 
       {/* Count */}
-      <span className="text-sm text-gray-400 ml-auto">
+      <span className="text-sm text-muted ml-auto">
         {filteredCount === totalCount
           ? `${totalCount} topics`
           : `${filteredCount} of ${totalCount} topics`}

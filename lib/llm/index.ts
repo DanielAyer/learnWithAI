@@ -1,10 +1,15 @@
-import { LLMConfig, UserPrefs } from '@/types'
+import { LLMConfig, UserPrefs, AnalysisMode } from '@/types'
 
 export interface AnalysisInput {
   conversationId: string
   title: string
   prefs: UserPrefs
   existingTopics: string[]
+  overrides?: {
+    mode?: AnalysisMode
+    categories?: string[]
+    maxCards?: number
+  }
 }
 
 export interface AnalysisOutput {

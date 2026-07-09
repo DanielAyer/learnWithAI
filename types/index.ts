@@ -1,18 +1,12 @@
 export type Tier = 1 | 2 | 3
 
-export type Category =
-  | 'Programming & Software Dev'
-  | 'Systems & Infrastructure'
-  | 'Mathematics & Theory'
-  | 'Data & ML / AI'
-  | 'Design & UI/UX'
-  | 'Product & Business'
-  | 'Security'
-  | 'Networking'
+export type Category = string
 
 export type CardStatus = 'untouched' | 'queued' | 'learned'
 
 export type ConversationStatus = 'unanalyzed' | 'analyzed' | 'ignored'
+
+export type AnalysisMode = 'guided' | 'strict'
 
 export type LLMProvider =
   | 'Anthropic'
@@ -44,6 +38,12 @@ export interface LLMConfigStore {
   configs: LLMConfig[]
 }
 
+export interface AnalysisOverrides {
+  mode?: AnalysisMode
+  categories?: Category[]
+  maxCards?: number
+}
+
 export interface TopicCard {
   id: string
   title: string
@@ -71,4 +71,6 @@ export interface Conversation {
 export interface UserPrefs {
   defaultTier: Tier
   categories: Category[]
+  analysisMode: AnalysisMode
+  maxCards: number
 }

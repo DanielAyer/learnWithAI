@@ -67,7 +67,7 @@ export default function LLMSelector() {
     return (
       <Link
         href="/settings/llm"
-        className="font-mono text-xs text-gray-400 hover:text-gray-600 transition-colors"
+        className="font-mono text-xs text-muted hover:text-secondary transition-colors"
       >
         + configure llm
       </Link>
@@ -102,7 +102,7 @@ export default function LLMSelector() {
             'bg-gray-400'
           }`} />
           {activeConfig.label}
-          <span className="text-gray-400">▾</span>
+          <span className="text-muted">▾</span>
         </button>
 
         {open && (
@@ -112,7 +112,7 @@ export default function LLMSelector() {
                 key={config.id}
                 onClick={() => handleSelect(config.index)}
                 className={`w-full text-left px-4 py-2.5 text-xs flex items-center gap-2 hover:bg-gray-50 transition-colors ${
-                  config.index === store.activeIndex ? 'bg-orange-50 text-orange-600' : 'text-gray-700'
+                  config.index === store.activeIndex ? 'bg-orange-50 text-orange-600' : 'text-secondary'
                 }`}
               >
                 <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
@@ -122,14 +122,14 @@ export default function LLMSelector() {
                 }`} />
                 <span className="flex-1">{config.label}</span>
                 {config.index === 0 && (
-                  <span className="text-gray-300 text-xs">primary</span>
+                  <span className="text-muted text-xs">primary</span>
                 )}
               </button>
             ))}
             <div className="border-t border-gray-100">
               <Link
                 href="/settings/llm"
-                className="block px-4 py-2.5 text-xs text-gray-500 hover:bg-gray-50 transition-colors"
+                className="block px-4 py-2.5 text-xs text-secondary hover:bg-gray-50 transition-colors"
                 onClick={() => setOpen(false)}
               >
                 Manage LLMs →

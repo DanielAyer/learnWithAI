@@ -79,7 +79,7 @@ export default function TopicsPage() {
   }, [cards, filters])
 
   if (loading) {
-    return <p className="text-gray-500">Loading topics...</p>
+    return <p className="text-secondary">Loading topics...</p>
   }
 
   return (
@@ -96,7 +96,7 @@ export default function TopicsPage() {
       />
 
       {filteredCards.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-muted">
           {cards.length === 0 ? (
             <>
               <p className="text-sm">No topics yet.</p>

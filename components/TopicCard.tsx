@@ -25,7 +25,7 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
     <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
       {/* Title + tier badge */}
       <div className="flex items-start justify-between gap-2">
-        <h3 className="font-medium text-sm leading-snug text-gray-900">
+        <h3 className="font-medium text-sm leading-snug text-primary">
           {card.title}
         </h3>
         <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${tierColors[card.tier]}`}>
@@ -34,26 +34,26 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
       </div>
 
       {/* Description */}
-      <p className="text-xs text-gray-500 leading-relaxed">
+      <p className="text-xs text-secondary leading-relaxed">
         {card.description}
       </p>
 
       {/* Prerequisites */}
       {card.prerequisites.length > 0 && (
-        <div className="text-xs text-gray-400">
+        <div className="text-xs text-muted">
           <span className="font-medium">Prereqs: </span>
           {card.prerequisites.join(', ')}
         </div>
       )}
 
       {/* Category */}
-      <div className="text-xs text-gray-400">
+      <div className="text-xs text-muted">
         {card.category}
       </div>
 
       {/* LLM badge */}
       {card.llmLabel && (
-        <div className="font-mono text-xs text-gray-300">
+        <div className="font-mono text-xs text-muted">
           {card.llmLabel}
         </div>
       )}
@@ -80,7 +80,7 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
             <>
               <button
                 onClick={() => onStatusChange(card.id, 'untouched')}
-                className="text-xs border border-gray-200 text-gray-500 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+                className="text-xs border border-gray-200 text-secondary px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Remove
               </button>
