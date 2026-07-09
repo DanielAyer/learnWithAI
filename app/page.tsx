@@ -7,21 +7,21 @@ export default function Home() {
         learn <span className="text-orange-500">{'{ }'}</span> with AI
       </h1>
       <p className="text-secondary text-lg max-w-md mb-8">
-        Turn your Claude conversations into a personal curriculum.
+        Turn your AI conversations into a personal curriculum.
         Surface knowledge gaps. Study what matters.
       </p>
       <div className="flex gap-4">
         <Link
+          href="/queue"
+          className="bg-orange-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-orange-600 transition-colors"
+        >
+          Learn
+        </Link>
+        <Link
           href="/conversations"
           className="bg-orange-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-orange-600 transition-colors"
         >
-          View Conversations
-        </Link>
-        <Link
-          href="/topics"
-          className="bg-orange-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-orange-600 transition-colors"
-        >
-          View Topics
+          Conversations
         </Link>
       </div>
     </div>

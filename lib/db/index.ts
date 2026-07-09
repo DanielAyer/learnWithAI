@@ -1,9 +1,10 @@
-import { TopicCard, Conversation, UserPrefs } from '@/types'
+import { TopicCard, Conversation, UserPrefs, AnalysisQueueItem } from '@/types'
 
 export interface DBAdapter {
   // Conversations
   getConversations(): Conversation[]
   upsertConversation(conversation: Conversation): void
+  deleteConversation(id: string): void
 
   // Topic Cards
   getTopicCards(): TopicCard[]
@@ -12,6 +13,15 @@ export interface DBAdapter {
   upsertTopicCard(card: TopicCard): void
   updateCardStatus(id: string, status: TopicCard['status']): void
   updateCardTutorialUrl(id: string, tutorialUrl: string | null): void
+  deleteCardsByConversation(conversationId: string): void
+
+  // Analysis Queue
+  getAnalysisQueue(): AnalysisQueueItem[]
+  addToAnalysisQueue(item: AnalysisQueueItem): void
+  updateAnalysisQueueItem(item: AnalysisQueueItem): void
+  removeFromAnalysisQueue(id: string): void
+  clearAnalysisQueue(): void
+  reorderAnalysisQueue(ids: string[]): void
 
   // User Preferences
   getUserPrefs(): UserPrefs | null

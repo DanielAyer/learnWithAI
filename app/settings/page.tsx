@@ -19,12 +19,12 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl">
       <h1 className="text-2xl font-semibold mb-6">Settings</h1>
-      <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {SETTINGS_LINKS.map(({ href, title, description, badge }) => (
           <Link
             key={href}
             href={href}
-            className="bg-white border border-gray-200 rounded-xl p-5 flex items-start justify-between gap-4 hover:border-orange-200 hover:bg-orange-50/30 transition-colors"
+            className="bg-white border border-gray-200 rounded-xl p-8 flex items-start justify-between gap-4 hover:border-orange-200 hover:bg-orange-50/30 transition-colors"
           >
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">

@@ -18,9 +18,17 @@ const statusColors = {
 
 export default function TopicCardComponent({ card, onStatusChange, showQueueButton = true }: Props) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden">
+
+      {/* Learned overlay badge */}
+      {card.status === 'learned' && (
+        <div className="absolute top-3 left-3 flex items-center gap-1 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded-lg z-10">
+          ✓ Learned
+        </div>
+      )}
+
       {/* Title + tier badge */}
-      <div className="flex items-start justify-between gap-2">
+      <div className={`flex items-start justify-between gap-2 ${card.status === 'learned' ? 'mt-6' : ''}`}>
         <h3 className="font-medium text-sm leading-snug text-primary">
           {card.title}
         </h3>
@@ -52,9 +60,9 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
 
       {/* Footer */}
       <div className="flex items-center justify-between mt-auto pt-1">
-        {card.status !== 'untouched' && (
-          <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[card.status]}`}>
-            {card.status}
+        {card.status === 'queued' && (
+          <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors['queued']}`}>
+            in queue
           </span>
         )}
 
@@ -80,15 +88,18 @@ export default function TopicCardComponent({ card, onStatusChange, showQueueButt
                 onClick={() => onStatusChange(card.id, 'learned')}
                 className="text-xs bg-green-500 text-white px-3 py-1.5 rounded-lg hover:bg-green-600 transition-colors"
               >
-                Learned
+                Mark Learned
               </button>
             </>
           )}
 
           {card.status === 'learned' && (
-            <span className="text-xs text-green-600 font-medium">
-              ✓ Learned
-            </span>
+            <button
+              onClick={() => onStatusChange(card.id, 'untouched')}
+              className="text-xs border border-gray-200 text-secondary px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Reset
+            </button>
           )}
         </div>
       </div>

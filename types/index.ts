@@ -74,3 +74,16 @@ export interface UserPrefs {
   analysisMode: AnalysisMode
   maxCards: number
 }
+
+export interface AnalysisQueueItem {
+  id: string
+  conversationId: string
+  title: string
+  position: number
+  mode: AnalysisMode
+  maxCards: number
+  categories: string[]
+  queuedAt: string
+  status: 'pending' | 'complete' | 'failed'
+  llmLabel?: string
+}

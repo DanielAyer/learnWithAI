@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3'
 import path from 'path'
-import { TopicCard, Conversation, UserPrefs } from '@/types'
+import { TopicCard, Conversation, UserPrefs, AnalysisQueueItem } from '@/types'
 import { DBAdapter } from './index'
 
 const DB_PATH = path.join(process.cwd(), 'data', 'learn.db')
@@ -40,28 +40,53 @@ export class SQLiteAdapter implements DBAdapter {
         tutorialUrl TEXT DEFAULT NULL
       );
 
+      CREATE TABLE IF NOT EXISTS analysis_queue (
+        id TEXT PRIMARY KEY,
+        conversationId TEXT NOT NULL,
+        title TEXT NOT NULL,
+        position INTEGER NOT NULL DEFAULT 0,
+        mode TEXT NOT NULL DEFAULT 'guided',
+        maxCards INTEGER NOT NULL DEFAULT 5,
+        categories TEXT NOT NULL DEFAULT '[]',
+        queuedAt TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending'
+      );
+
       CREATE TABLE IF NOT EXISTS user_prefs (
         id INTEGER PRIMARY KEY DEFAULT 1,
         defaultTier INTEGER NOT NULL DEFAULT 1,
-        categories TEXT NOT NULL DEFAULT '[]'
+        categories TEXT NOT NULL DEFAULT '[]',
+        analysisMode TEXT NOT NULL DEFAULT 'guided',
+        maxCards INTEGER NOT NULL DEFAULT 5
       );
     `)
 
     // Migrate existing databases
-    const columns = this.db.prepare(`PRAGMA table_info(topic_cards)`).all() as any[]
-    const columnNames = columns.map(c => c.name)
+    const topicColumns = this.db.prepare(`PRAGMA table_info(topic_cards)`).all() as any[]
+    const topicColumnNames = topicColumns.map(c => c.name)
 
-    if (!columnNames.includes('llmId')) {
+    if (!topicColumnNames.includes('llmId')) {
       this.db.exec(`ALTER TABLE topic_cards ADD COLUMN llmId TEXT NOT NULL DEFAULT ''`)
     }
-    if (!columnNames.includes('llmLabel')) {
+    if (!topicColumnNames.includes('llmLabel')) {
       this.db.exec(`ALTER TABLE topic_cards ADD COLUMN llmLabel TEXT NOT NULL DEFAULT ''`)
     }
-    if (!columnNames.includes('tutorialUrl')) {
+    if (!topicColumnNames.includes('tutorialUrl')) {
       this.db.exec(`ALTER TABLE topic_cards ADD COLUMN tutorialUrl TEXT DEFAULT NULL`)
+    }
+
+    const prefsColumns = this.db.prepare(`PRAGMA table_info(user_prefs)`).all() as any[]
+    const prefsColumnNames = prefsColumns.map(c => c.name)
+
+    if (!prefsColumnNames.includes('analysisMode')) {
+      this.db.exec(`ALTER TABLE user_prefs ADD COLUMN analysisMode TEXT NOT NULL DEFAULT 'guided'`)
+    }
+    if (!prefsColumnNames.includes('maxCards')) {
+      this.db.exec(`ALTER TABLE user_prefs ADD COLUMN maxCards INTEGER NOT NULL DEFAULT 5`)
     }
   }
 
+  // Conversations
   getConversations(): Conversation[] {
     return this.db.prepare('SELECT * FROM conversations ORDER BY updatedAt DESC').all() as Conversation[]
   }
@@ -78,6 +103,11 @@ export class SQLiteAdapter implements DBAdapter {
     `).run(conversation)
   }
 
+  deleteConversation(id: string): void {
+    this.db.prepare('DELETE FROM conversations WHERE id = ?').run(id)
+  }
+
+  // Topic Cards
   getTopicCards(): TopicCard[] {
     const rows = this.db.prepare('SELECT * FROM topic_cards ORDER BY createdAt DESC').all() as any[]
     return rows.map(this.deserializeCard)
@@ -135,25 +165,105 @@ export class SQLiteAdapter implements DBAdapter {
     this.db.prepare('UPDATE topic_cards SET tutorialUrl = ? WHERE id = ?').run(tutorialUrl, id)
   }
 
+  deleteCardsByConversation(conversationId: string): void {
+    const cards = this.getTopicCardsByConversation(conversationId)
+    for (const card of cards) {
+      this.db.prepare('DELETE FROM topic_cards WHERE id = ?').run(card.id)
+    }
+  }
+
+  // Analysis Queue
+  getAnalysisQueue(): AnalysisQueueItem[] {
+    const rows = this.db.prepare(
+      'SELECT * FROM analysis_queue ORDER BY position ASC'
+    ).all() as any[]
+    return rows.map(row => ({
+      ...row,
+      categories: JSON.parse(row.categories)
+    }))
+  }
+
+  addToAnalysisQueue(item: AnalysisQueueItem): void {
+    this.db.prepare(`
+      INSERT INTO analysis_queue (
+        id, conversationId, title, position, mode,
+        maxCards, categories, queuedAt, status
+      )
+      VALUES (
+        @id, @conversationId, @title, @position, @mode,
+        @maxCards, @categories, @queuedAt, @status
+      )
+      ON CONFLICT(id) DO UPDATE SET
+        position = @position,
+        mode = @mode,
+        maxCards = @maxCards,
+        categories = @categories,
+        status = @status
+    `).run({
+      ...item,
+      categories: JSON.stringify(item.categories)
+    })
+  }
+
+  updateAnalysisQueueItem(item: AnalysisQueueItem): void {
+    this.db.prepare(`
+      UPDATE analysis_queue SET
+        position = @position,
+        mode = @mode,
+        maxCards = @maxCards,
+        categories = @categories,
+        status = @status
+      WHERE id = @id
+    `).run({
+      ...item,
+      categories: JSON.stringify(item.categories)
+    })
+  }
+
+  removeFromAnalysisQueue(id: string): void {
+    this.db.prepare('DELETE FROM analysis_queue WHERE id = ?').run(id)
+  }
+
+  clearAnalysisQueue(): void {
+    this.db.prepare('DELETE FROM analysis_queue').run()
+  }
+
+  reorderAnalysisQueue(ids: string[]): void {
+    const update = this.db.prepare(
+      'UPDATE analysis_queue SET position = ? WHERE id = ?'
+    )
+    const reorder = this.db.transaction((ids: string[]) => {
+      ids.forEach((id, index) => update.run(index, id))
+    })
+    reorder(ids)
+  }
+
+  // User Preferences
   getUserPrefs(): UserPrefs | null {
     const row = this.db.prepare('SELECT * FROM user_prefs WHERE id = 1').get() as any
     if (!row) return null
     return {
       defaultTier: row.defaultTier,
-      categories: JSON.parse(row.categories)
+      categories: JSON.parse(row.categories),
+      analysisMode: row.analysisMode ?? 'guided',
+      maxCards: row.maxCards ?? 5
     }
   }
 
   saveUserPrefs(prefs: UserPrefs): void {
     this.db.prepare(`
-      INSERT INTO user_prefs (id, defaultTier, categories)
-      VALUES (1, @defaultTier, @categories)
+      INSERT INTO user_prefs (id, defaultTier, categories, analysisMode, maxCards)
+      VALUES (1, @defaultTier, @categories, @analysisMode, @maxCards)
       ON CONFLICT(id) DO UPDATE SET
         defaultTier = @defaultTier,
-        categories = @categories
+        categories = @categories,
+        analysisMode = @analysisMode,
+        maxCards = @maxCards
     `).run({
       defaultTier: prefs.defaultTier,
-      categories: JSON.stringify(prefs.categories)
+      categories: JSON.stringify(prefs.categories),
+      analysisMode: prefs.analysisMode,
+      maxCards: prefs.maxCards
     })
   }
 

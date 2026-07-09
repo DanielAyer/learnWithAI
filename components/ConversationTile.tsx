@@ -1,11 +1,13 @@
 'use client'
 
+import { useState } from 'react'
 import { Conversation } from '@/types'
 import Link from 'next/link'
 
 interface Props {
   conversation: Conversation
   onStatusChange: (id: string, status: Conversation['status']) => void
+  onDelete: (id: string) => void
 }
 
 const statusColors = {
@@ -14,10 +16,13 @@ const statusColors = {
   ignored: 'bg-red-50 text-red-400'
 }
 
-export default function ConversationTile({ conversation, onStatusChange }: Props) {
+export default function ConversationTile({ conversation, onStatusChange, onDelete }: Props) {
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
   return (
-    <div className={`bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 ${conversation.status === 'ignored' ? 'opacity-50' : ''}`}>
-      {/* Title + status */}
+    <div className={`bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 min-h-[160px] ${conversation.status === 'ignored' ? 'opacity-50' : ''}`}>
+
+      {/* Title + status badge */}
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-medium text-sm leading-snug line-clamp-2 text-primary">
           {conversation.title}
@@ -33,8 +38,8 @@ export default function ConversationTile({ conversation, onStatusChange }: Props
         {conversation.messageCount ? ` · ${conversation.messageCount} messages` : ''}
       </div>
 
-      {/* Actions */}
-      <div className="flex gap-2 mt-auto">
+      {/* Primary actions */}
+      <div className="flex gap-2">
         {conversation.status === 'analyzed' && (
           <Link
             href={`/conversations/${conversation.id}`}
@@ -43,7 +48,6 @@ export default function ConversationTile({ conversation, onStatusChange }: Props
             View Topics →
           </Link>
         )}
-
         {conversation.status !== 'ignored' && (
           <Link
             href={`/analyze/${conversation.id}`}
@@ -52,10 +56,39 @@ export default function ConversationTile({ conversation, onStatusChange }: Props
             {conversation.status === 'analyzed' ? 'Reanalyze' : 'Analyze Conversation'}
           </Link>
         )}
+      </div>
 
+      {/* Footer — delete left, ignore right — always anchored */}
+      <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
+        {/* Delete — lower left */}
+        {confirmDelete ? (
+          <div className="flex gap-1">
+            <button
+              onClick={() => onDelete(conversation.id)}
+              className="text-xs bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Confirm
+            </button>
+            <button
+              onClick={() => setConfirmDelete(false)}
+              className="text-xs border border-gray-200 text-secondary px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setConfirmDelete(true)}
+            className="text-xs border border-red-200 text-red-400 px-2 py-1 rounded-lg hover:bg-red-50 transition-colors"
+          >
+            Delete
+          </button>
+        )}
+
+        {/* Ignore/Unignore — lower right, always same position */}
         <button
           onClick={() => onStatusChange(conversation.id, conversation.status === 'ignored' ? 'unanalyzed' : 'ignored')}
-          className="text-xs border border-gray-200 text-secondary px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+          className="text-xs border border-gray-200 text-secondary px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors"
         >
           {conversation.status === 'ignored' ? 'Unignore' : 'Ignore'}
         </button>

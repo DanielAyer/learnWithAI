@@ -42,18 +42,16 @@ export default function AnalyzePage() {
   const [categories, setCategories] = useState<string[]>([])
   const [learnedCount, setLearnedCount] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [analyzing, setAnalyzing] = useState(false)
+  const [queuing, setQueuing] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
   useEffect(() => {
     async function load() {
-      // Load conversations to find this one
       const convRes = await fetch('/api/conversations')
       const convData = await convRes.json()
       const conv = convData.conversations?.find((c: Conversation) => c.id === id)
       setConversation(conv ?? null)
 
-      // Load preferences
       const prefsRes = await fetch('/api/preferences')
       const prefsData = await prefsRes.json()
       if (prefsData.prefs) {
@@ -64,7 +62,6 @@ export default function AnalyzePage() {
         setCategories(p.categories ?? [])
       }
 
-      // Load learned topic count for token estimate
       const topicsRes = await fetch('/api/topics')
       const topicsData = await topicsRes.json()
       const learned = topicsData.cards?.filter((c: any) => c.status === 'learned').length ?? 0
@@ -84,26 +81,28 @@ export default function AnalyzePage() {
   const multiplier = Math.round((tokens.total / baseTokens.total) * 10) / 10
   const barWidth = Math.min(100, (tokens.total / (baseTokens.total * 10)) * 100)
 
-  async function handleAnalyze() {
+  async function handleQueueAnalysis() {
     if (!conversation) return
-    setAnalyzing(true)
+    setQueuing(true)
     setShowConfirm(false)
 
-    const res = await fetch('/api/analyze', {
+    const res = await fetch('/api/analysis-queue', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         conversationId: id,
         title: conversation.title,
-        overrides: { mode, maxCards, categories }
+        mode,
+        maxCards,
+        categories
       })
     })
 
     if (res.ok) {
-      router.push(`/conversations/${id}`)
+      router.push('/conversations')
     } else {
-      alert('Analysis failed. Check your API key and try again.')
-      setAnalyzing(false)
+      alert('Failed to queue analysis. Please try again.')
+      setQueuing(false)
     }
   }
 
@@ -120,7 +119,7 @@ export default function AnalyzePage() {
         >
           ← Conversations
         </Link>
-        <h1 className="text-2xl font-semibold mt-2">Analyze Conversation</h1>
+        <h1 className="text-2xl font-semibold mt-2">Configure Analysis</h1>
         <p className="text-secondary text-sm mt-1 line-clamp-2">{conversation.title}</p>
         <p className="text-xs text-muted mt-0.5">
           {new Date(conversation.updatedAt).toLocaleDateString()}
@@ -193,7 +192,7 @@ export default function AnalyzePage() {
         {/* Base bar */}
         <div className="flex flex-col gap-1 mb-3">
           <div className="flex items-center justify-between text-xs text-muted mb-1">
-            <span>Base call</span>
+            <span>Base call (3 cards)</span>
             <span>{baseTokens.total} tokens · 1x</span>
           </div>
           <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
@@ -252,10 +251,10 @@ export default function AnalyzePage() {
         </Link>
         <button
           onClick={() => setShowConfirm(true)}
-          disabled={analyzing || categories.length === 0}
+          disabled={queuing || categories.length === 0}
           className="text-sm bg-orange-500 text-white px-6 py-2.5 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-40 font-medium"
         >
-          {analyzing ? 'Analyzing...' : 'Analyze →'}
+          {queuing ? 'Queuing...' : 'Add to Queue →'}
         </button>
       </div>
 
@@ -263,9 +262,9 @@ export default function AnalyzePage() {
       {showConfirm && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Confirm Analysis</h2>
+            <h2 className="text-lg font-semibold">Queue Analysis</h2>
             <p className="text-secondary text-sm">
-              You are about to analyze <strong className="text-primary">"{conversation.title}"</strong>.
+              Add <strong className="text-primary">"{conversation.title}"</strong> to the analysis queue?
             </p>
             <div className="bg-gray-50 rounded-xl p-4 flex flex-col gap-2 text-sm">
               <div className="flex justify-between">
@@ -297,10 +296,10 @@ export default function AnalyzePage() {
                 Cancel
               </button>
               <button
-                onClick={handleAnalyze}
+                onClick={handleQueueAnalysis}
                 className="text-sm bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors font-medium"
               >
-                Confirm
+                Add to Queue
               </button>
             </div>
           </div>

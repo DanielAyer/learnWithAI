@@ -33,6 +33,31 @@ The things you ask an AI to explain, debug, or do for you are exactly the things
 - **LLM:** Anthropic Claude via `@anthropic-ai/sdk` (default), OpenAI-compatible adapter for all other providers
 - **Deployment:** Vercel
 
+## Dependencies & Licenses
+
+All dependencies are MIT licensed unless otherwise noted.
+
+| Package | Version | License | Purpose |
+|---------|---------|---------|---------|
+| `next` | 16.2.9 | MIT | React framework, routing, API routes |
+| `react` | 19.x | MIT | UI component library |
+| `react-dom` | 19.x | MIT | React DOM renderer |
+| `typescript` | 5.x | Apache-2.0 | Type safety |
+| `tailwindcss` | 4.x | MIT | Utility-first CSS |
+| `@anthropic-ai/sdk` | latest | MIT | Anthropic Claude API client |
+| `better-sqlite3` | 12.11.1 | MIT | Local SQLite database |
+| `uuid` | latest | MIT | UUID generation for card IDs |
+| `@dnd-kit/core` | latest | MIT | Drag and drop core |
+| `@dnd-kit/sortable` | latest | MIT | Sortable drag and drop |
+| `@dnd-kit/utilities` | latest | MIT | Drag and drop utilities |
+| `eslint` | latest | MIT | Code linting |
+| `@types/node` | latest | MIT | Node.js type definitions |
+| `@types/react` | latest | MIT | React type definitions |
+| `@types/better-sqlite3` | latest | MIT | SQLite type definitions |
+| `@types/uuid` | latest | MIT | UUID type definitions |
+
+> Note: `typescript` uses the Apache-2.0 license, which is also permissive and compatible with MIT projects. All other dependencies are MIT.
+
 ---
 
 ## Architecture
