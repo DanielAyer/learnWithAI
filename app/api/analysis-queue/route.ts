@@ -25,6 +25,12 @@ export async function POST(request: Request) {
     const body = await request.json()
     const queue = db.getAnalysisQueue()
 
+    // Get active LLM label
+    const { readConfigStore } = await import('@/lib/llm/configs')
+    const store = readConfigStore()
+    const activeConfig = store.configs[store.activeIndex] ?? store.configs[0]
+    const llmLabel = activeConfig?.label ?? 'Unknown LLM'
+
     const item: AnalysisQueueItem = {
       id: uuidv4(),
       conversationId: body.conversationId,
@@ -34,7 +40,8 @@ export async function POST(request: Request) {
       maxCards: body.maxCards ?? 5,
       categories: body.categories ?? [],
       queuedAt: new Date().toISOString(),
-      status: 'pending'
+      status: 'pending',
+      llmLabel
     }
 
     db.addToAnalysisQueue(item)

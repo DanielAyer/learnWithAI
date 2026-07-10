@@ -25,6 +25,7 @@ export default function AnalyzeQueuePage() {
   const [running, setRunning] = useState(false)
   const [progress, setProgress] = useState<{ current: number, total: number } | null>(null)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
+  const [currentTitle, setCurrentTitle] = useState<string>('')
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -134,6 +135,7 @@ export default function AnalyzeQueuePage() {
     for (let i = 0; i < pending.length; i++) {
       const item = pending[i]
       setProgress({ current: i + 1, total: pending.length })
+      setCurrentTitle(item.title)
 
       const res = await fetch('/api/analyze', {
         method: 'POST',
@@ -194,17 +196,25 @@ export default function AnalyzeQueuePage() {
             className="text-sm bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-40 font-medium"
           >
             {running && progress
-              ? `Analyzing ${progress.current} of ${progress.total}...`
+              ? `Analyzing "${currentTitle}" (${progress.current} of ${progress.total})...`
               : `Run Queue (${pendingCount})`}
           </button>
         </div>
       </div>
 
       {/* Progress bar */}
+      {/* TODO: STATUS_ACCURACY
+        Progress bar advances per API call completion, not per token processed.
+        For short conversations the bar jumps instantly; for long ones it appears
+        stuck then jumps. A more accurate indicator would stream token progress
+        from the API response. Consider using Anthropic's streaming API in a
+        future release to provide real-time progress updates per analysis call. */
+      }
+      
       {running && progress && (
         <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4">
           <div className="flex items-center justify-between text-xs text-secondary mb-2">
-            <span>Running analysis queue...</span>
+            <span>Analyzing Conversation...</span>
             <span>{progress.current} / {progress.total}</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">

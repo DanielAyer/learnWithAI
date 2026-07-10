@@ -49,7 +49,8 @@ export class SQLiteAdapter implements DBAdapter {
         maxCards INTEGER NOT NULL DEFAULT 5,
         categories TEXT NOT NULL DEFAULT '[]',
         queuedAt TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'pending'
+        status TEXT NOT NULL DEFAULT 'pending',
+        llmLabel TEXT NOT NULL DEFAULT ''
       );
 
       CREATE TABLE IF NOT EXISTS user_prefs (
@@ -83,6 +84,13 @@ export class SQLiteAdapter implements DBAdapter {
     }
     if (!prefsColumnNames.includes('maxCards')) {
       this.db.exec(`ALTER TABLE user_prefs ADD COLUMN maxCards INTEGER NOT NULL DEFAULT 5`)
+    }
+
+    const queueColumns = this.db.prepare(`PRAGMA table_info(analysis_queue)`).all() as any[]
+    const queueColumnNames = queueColumns.map(c => c.name)
+
+    if (!queueColumnNames.includes('llmLabel')) {
+      this.db.exec(`ALTER TABLE analysis_queue ADD COLUMN llmLabel TEXT NOT NULL DEFAULT ''`)
     }
   }
 

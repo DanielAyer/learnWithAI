@@ -5,6 +5,7 @@ import { AnalysisQueueItem, AnalysisMode } from '@/types'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import CategoryCombobox from './CategoryCombobox'
+import Link from 'next/link'
 
 interface Props {
   item: AnalysisQueueItem
@@ -14,7 +15,7 @@ interface Props {
   isRunning?: boolean
 }
 
-export default function AnalysisQueueTile({ item, onDelete, onUpdate, isRunning }: Props) {
+export default function AnalysisQueueTile({ item, onDelete, onUpdate, onRunNow, isRunning }: Props) {
   const [expanded, setExpanded] = useState(false)
   const [mode, setMode] = useState<AnalysisMode>(item.mode)
   const [maxCards, setMaxCards] = useState(item.maxCards)
@@ -75,11 +76,22 @@ export default function AnalysisQueueTile({ item, onDelete, onUpdate, isRunning 
         </button>
 
         {/* Content */}
-        <div
-          className="flex-1 min-w-0 cursor-pointer"
-          onClick={() => !isRunning && item.status === 'pending' && setExpanded(prev => !prev)}
-        >
-          <p className="text-sm font-medium text-primary truncate">{item.title}</p>
+        <div className="flex-1 min-w-0">
+          {item.status === 'complete' ? (
+            <Link
+              href={`/conversations/${item.conversationId}`}
+              className="text-sm font-medium text-orange-600 hover:text-orange-700 truncate block transition-colors"
+            >
+              {item.title} →
+            </Link>
+          ) : (
+            <p
+              className="text-sm font-medium text-primary truncate cursor-pointer"
+              onClick={() => !isRunning && item.status === 'pending' && setExpanded(prev => !prev)}
+            >
+              {item.title}
+            </p>
+          )}
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
             <span className="text-xs text-muted capitalize">{item.mode}</span>
             <span className="text-xs text-muted">·</span>
