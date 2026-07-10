@@ -58,7 +58,11 @@ echo ""
 
 # ── Copy env file ──────────────────────────────────────────
 if [ ! -f "$REPO_DIR/.env.local" ]; then
-  cp "$REPO_DIR/.env.local.example" "$REPO_DIR/.env.local"
+  if [ -f "$REPO_DIR/.env.local.example" ]; then
+    cp "$REPO_DIR/.env.local.example" "$REPO_DIR/.env.local"
+  else
+    touch "$REPO_DIR/.env.local"
+  fi
 fi
 
 # ── Create data directory ──────────────────────────────────
