@@ -14,7 +14,7 @@ The things you ask an AI to explain, debug, or do for you are exactly the things
 
 ## Features
 
-- **Conversation analysis** — import your Claude conversation history and generate topic cards per conversation
+- **Conversation analysis** — import your LLM conversation history and generate topic cards per conversation
 - **LLM agnostic** — configure any LLM (Anthropic, OpenAI, Ollama, Groq, Mistral, or custom endpoint) with priority-based failover
 - **Three-tier learning model** — Surface (what you use), Mechanism (how it works), Substrate (what it runs on)
 - **Analysis modes** — Guided (categories as context) or Strict (categories as hard constraints)
