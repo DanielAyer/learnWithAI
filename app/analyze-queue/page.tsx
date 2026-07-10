@@ -182,6 +182,25 @@ export default function AnalyzeQueuePage() {
           </p>
         </div>
         <div className="flex gap-2">
+          {queue.some(i => i.status === 'complete' || i.status === 'failed') && !running && (
+            <button
+              onClick={async () => {
+                const completed = queue.filter(i => i.status === 'complete' || i.status === 'failed')
+                for (const item of completed) {
+                  await fetch('/api/analysis-queue', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: item.id })
+                  })
+                }
+                setQueue(prev => prev.filter(i => i.status === 'pending'))
+              }}
+              className="text-xs border border-gray-200 text-secondary px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Clear Completed
+            </button>
+          )}
+          
           {queue.length > 0 && !running && (
             <button
               onClick={() => setShowClearConfirm(true)}

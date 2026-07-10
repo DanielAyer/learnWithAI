@@ -8,6 +8,8 @@ interface Props {
   conversation: Conversation
   onStatusChange: (id: string, status: Conversation['status']) => void
   onDelete: (id: string) => void
+  selected: boolean
+  onToggleSelect: (id: string) => void
 }
 
 const statusColors = {
@@ -16,20 +18,32 @@ const statusColors = {
   ignored: 'bg-red-50 text-red-400'
 }
 
-export default function ConversationTile({ conversation, onStatusChange, onDelete }: Props) {
+export default function ConversationTile({ conversation, onStatusChange, onDelete, selected, onToggleSelect }: Props) {
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 min-h-[160px] ${conversation.status === 'ignored' ? 'opacity-50' : ''}`}>
-
-      {/* Title + status badge */}
+    <div
+      onClick={() => conversation.status !== 'ignored' && onToggleSelect(conversation.id)}
+      className={`border rounded-xl p-4 flex flex-col gap-3 min-h-[160px] transition-all cursor-pointer
+        ${conversation.status === 'ignored' ? 'opacity-50 cursor-not-allowed' : ''}
+        ${selected 
+          ? 'bg-gray-200 border-orange-400 shadow-inner' 
+          : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm hover:shadow'}
+      `}
+    >
+      {/* Title + status + checkmark */}
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-medium text-sm leading-snug line-clamp-2 text-primary">
           {conversation.title}
         </h3>
-        <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${statusColors[conversation.status]}`}>
-          {conversation.status}
-        </span>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {selected && (
+            <span className="text-xs text-orange-500 font-medium">✓</span>
+          )}
+          <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[conversation.status]}`}>
+            {conversation.status}
+          </span>
+        </div>
       </div>
 
       {/* Metadata */}
@@ -39,7 +53,7 @@ export default function ConversationTile({ conversation, onStatusChange, onDelet
       </div>
 
       {/* Primary actions */}
-      <div className="flex gap-2">
+      <div className="flex gap-2" onClick={e => e.stopPropagation()}>
         {conversation.status === 'analyzed' && (
           <Link
             href={`/conversations/${conversation.id}`}
@@ -51,16 +65,18 @@ export default function ConversationTile({ conversation, onStatusChange, onDelet
         {conversation.status !== 'ignored' && (
           <Link
             href={`/analyze/${conversation.id}`}
-            className="text-xs bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-colors"
+            className="text-xs border border-gray-200 text-secondary px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
           >
-            {conversation.status === 'analyzed' ? 'Reanalyze' : 'Analyze Conversation'}
+            Settings
           </Link>
         )}
       </div>
 
-      {/* Footer — delete left, ignore right — always anchored */}
-      <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
-        {/* Delete — lower left */}
+      {/* Footer */}
+      <div
+        className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100"
+        onClick={e => e.stopPropagation()}
+      >
         {confirmDelete ? (
           <div className="flex gap-1">
             <button
@@ -85,7 +101,6 @@ export default function ConversationTile({ conversation, onStatusChange, onDelet
           </button>
         )}
 
-        {/* Ignore/Unignore — lower right, always same position */}
         <button
           onClick={() => onStatusChange(conversation.id, conversation.status === 'ignored' ? 'unanalyzed' : 'ignored')}
           className="text-xs border border-gray-200 text-secondary px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors"

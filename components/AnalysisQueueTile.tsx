@@ -107,12 +107,12 @@ export default function AnalysisQueueTile({ item, onDelete, onUpdate, onRunNow, 
           </div>
         </div>
 
-        {/* Status + delete */}
+        {/* Status + actions */}
         <div className="flex items-center gap-2 shrink-0">
           <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[item.status]}`}>
             {item.status}
           </span>
-          {!isRunning && item.status === 'pending' && (
+          {!isRunning && (
             confirmDelete ? (
               <div className="flex gap-1">
                 <button
@@ -130,12 +130,14 @@ export default function AnalysisQueueTile({ item, onDelete, onUpdate, onRunNow, 
               </div>
             ) : (
               <div className="flex gap-1">
-                <button
-                  onClick={() => onRunNow(item.id)}
-                  className="text-xs bg-orange-500 text-white px-2 py-1 rounded-lg hover:bg-orange-600 transition-colors"
-                >
-                  Run Now
-                </button>
+                {item.status === 'pending' && (
+                  <button
+                    onClick={() => onRunNow(item.id)}
+                    className="text-xs bg-orange-500 text-white px-2 py-1 rounded-lg hover:bg-orange-600 transition-colors"
+                  >
+                    Run Now
+                  </button>
+                )}
                 <button
                   onClick={() => setConfirmDelete(true)}
                   className="text-xs border border-red-200 text-red-400 px-2 py-1 rounded-lg hover:bg-red-50 transition-colors"
@@ -146,6 +148,7 @@ export default function AnalysisQueueTile({ item, onDelete, onUpdate, onRunNow, 
             )
           )}
         </div>
+
       </div>
 
       {/* Expanded settings */}
