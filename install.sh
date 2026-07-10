@@ -87,11 +87,16 @@ elif [ "$INSTALL_TYPE" = "2" ]; then
   fi
   echo ""
 
+  # Start Ollama service if not running
+  if ! pgrep -x "ollama" > /dev/null; then
+    echo "Starting Ollama service..."
+    ollama serve &
+    sleep 3
+  fi
+
   # Pull Mistral
   echo "Pulling Mistral 7B — this may take several minutes (~5GB download)..."
   ollama pull mistral
-  echo -e "${GREEN}✓ Mistral 7B ready${NC}"
-  echo ""
 
   # Seed llm-configs.json
   # TODO: LOCAL_LLM_UI
