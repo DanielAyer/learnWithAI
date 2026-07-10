@@ -33,13 +33,13 @@ let adapter: DBAdapter | undefined
 export async function getDB(): Promise<DBAdapter> {
   if (adapter) return adapter as DBAdapter
 
-  if (process.env.NODE_ENV === 'production') {
-    const { PostgresAdapter } = await import('./postgres')
-    adapter = new PostgresAdapter()
-  } else {
-    const { SQLiteAdapter } = await import('./sqlite')
-    adapter = new SQLiteAdapter()
-  }
+  if (process.env.USE_POSTGRES === 'true') {
+  const { PostgresAdapter } = await import('./postgres')
+  adapter = new PostgresAdapter()
+} else {
+  const { SQLiteAdapter } = await import('./sqlite')
+  adapter = new SQLiteAdapter()
+}
 
   return adapter as DBAdapter
 }
