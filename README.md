@@ -28,11 +28,17 @@ The things you ask an AI to explain, debug, or do for you are exactly the things
 ---
 
 ![Landing page](screenshots/01-landing.png)
+
 ![Conversations](screenshots/02-conversations.png)
+
 ![Analyze Queue](screenshots/03-analyze-queue.png)
+
 ![Learn](screenshots/04-learn.png)
+
 ![LLM Settings](screenshots/05-settings-llm.png)
+
 ![Preferences](screenshots/06-settings-preferences.png)
+
 
 ---
 
